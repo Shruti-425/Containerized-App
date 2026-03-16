@@ -15,6 +15,9 @@ services:
     depends_on:
       - db
     restart: always
+    networks:
+      macvlan_net:
+        ipv4_address: 192.168.200.10
 
   db:
     build: ./database
@@ -26,6 +29,13 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
+    networks:
+      macvlan_net:
+        ipv4_address: 192.168.200.11
 
 volumes:
   pgdata:
+
+networks:
+  macvlan_net:
+    external: true
