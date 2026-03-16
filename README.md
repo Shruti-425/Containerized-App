@@ -15,7 +15,7 @@ Download and install Docker Desktop from the official website.
 
 🔗 https://www.docker.com/products/docker-desktop/
 
-![Docker Installation](Images/13.png)
+![Docker Installation]
 
 ---
 
@@ -33,7 +33,7 @@ Example Output
 Docker version 24.x.x
 ```
 
-![Docker Version](Images/14.png)
+![Docker Version]
 
 ---
 
@@ -49,7 +49,7 @@ Example Output
 Docker Compose version v2.x.x
 ```
 
-![Docker Compose Version](Images/15.png)
+![Docker Compose Version]
 
 ---
 
@@ -86,7 +86,7 @@ git clone https://github.com/Shruti-425/Containerized-App.git
 cd Containerized-App
 ```
 
-![Clone Repository](Images/16.png)
+![Clone Repository]
 
 ---
 
@@ -141,7 +141,7 @@ host
 none
 ```
 
-![Docker Network](Images/17.png)
+![Docker Network]
 
 ---
 
@@ -161,7 +161,7 @@ Building db
 Successfully built images
 ```
 
-![Docker Build](Images/18.png)
+![Docker Build]
 
 ---
 
@@ -171,7 +171,7 @@ Successfully built images
 docker compose up -d
 ```
 
-![Docker Compose Up](Images/19.png)
+![Docker Compose Up]
 
 ---
 
@@ -189,7 +189,7 @@ backend        containerized-app-backend    0.0.0.0:3000->3000/tcp
 postgresdb     containerized-app-db
 ```
 
-![Running Containers](Images/20.png)
+![Running Containers]
 
 ---
 
