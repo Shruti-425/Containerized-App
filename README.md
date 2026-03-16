@@ -1,236 +1,375 @@
-# Containerized Application with Docker Networking
+# **Containerized Application using Docker**
 
-## Project Overview
+## **Objective**
 
-This project demonstrates how to containerize a backend application and database using Docker.
-The backend service is built with Node.js and connects to a PostgreSQL database.
-Both services run inside containers and communicate using Docker networking.
-
-The project also demonstrates:
-
-* Containerization of applications
-* Multi-container architecture
-* Docker networking
-* Service communication using Docker Compose
+To build and deploy a containerized application using Docker and Docker Compose.
+The backend service communicates with a PostgreSQL database and the APIs are tested using Postman.
 
 ---
 
-# Technologies Used
+# **Part A: Environment Setup**
 
-* Docker
-* Docker Compose
-* Node.js
-* PostgreSQL
-* REST API
+## **Step 1: Install Docker**
 
----
+Download and install Docker Desktop from the official website.
 
-# Project Architecture
+🔗 https://www.docker.com/products/docker-desktop/
 
-User → Backend Container → PostgreSQL Container
-
-The backend container handles API requests and communicates with the database container to store and retrieve data.
+![Docker Installation](Images/13.png)
 
 ---
 
-# Project Directory Structure
+## **Step 2: Verify Docker Installation**
 
-containerized-app
+Check whether Docker is installed correctly.
+
+```bash
+docker --version
+```
+
+Example Output
+
+```
+Docker version 24.x.x
+```
+
+![Docker Version](Images/14.png)
+
+---
+
+## **Step 3: Verify Docker Compose**
+
+```bash
+docker compose version
+```
+
+Example Output
+
+```
+Docker Compose version v2.x.x
+```
+
+![Docker Compose Version](Images/15.png)
+
+---
+
+# **Part B: Project Setup**
+
+## **Project Directory Structure**
+
+```
+Containerized-App/
 │
-├── backend
+├── backend/
+│   ├── server.js
 │   ├── Dockerfile
-│   ├── package.json
-│   └── server.js
+│   └── package.json
 │
-├── db
-│   └── Dockerfile
+├── db/
+│   ├── Dockerfile
 │   └── init.sql
+│
+├── Images/
 │
 ├── docker-compose.yml
 └── README.md
+```
 
 ---
 
-# Prerequisites
+## **Step 1: Clone the Repository**
 
-Before running the project ensure the following tools are installed:
+Clone the project repository from GitHub.
 
-Docker
-Docker Compose
-Git
+```bash
+git clone https://github.com/Shruti-425/Containerized-App.git
+cd Containerized-App
+```
 
-Check installation:
-
-docker --version
-docker compose version
+![Clone Repository](Images/16.png)
 
 ---
 
-# Step 1: Clone the Repository
+# **Part C: Network Configuration**
 
-Clone the project repository and navigate to the project folder.
+Before creating Docker networks, check the system network configuration.
 
-git clone <repository-url>
-cd containerized-app
+## **Check System IP Address**
+
+```bash
+ipconfig
+```
+
+Example Output
+
+```
+IPv4 Address : 192.168.200.5
+Subnet Mask  : 255.255.255.0
+Gateway      : 192.168.200.1
+```
+
+This ensures that the Docker network subnet is valid.
 
 ---
 
-# Step 2: Create Custom Docker Network
+# **Part D: Docker Networking Setup**
 
-Create a macvlan network so containers get their own IP address.
+## **Create macvlan Network**
 
-docker network create -d macvlan 
---subnet=192.168.200.0/24 
---gateway=192.168.200.1 
--o parent=eth0 
+```bash
+docker network create -d macvlan \
+--subnet=192.168.200.0/24 \
+--gateway=192.168.200.1 \
+-o parent=eth0 \
 macvlan_net
+```
 
-Verify the network:
+---
 
+## **Verify Network**
+
+```bash
 docker network ls
+```
 
-Expected output should include:
+Expected Output
 
+```
 macvlan_net
+bridge
+host
+none
+```
+
+![Docker Network](Images/17.png)
 
 ---
 
-# Step 3: Build Docker Images
+# **Part E: Build and Run Containers**
 
-Build the images for backend and database services.
+## **Build Docker Images**
 
+```bash
 docker compose build
+```
+
+Example Output
+
+```
+Building backend
+Building db
+Successfully built images
+```
+
+![Docker Build](Images/18.png)
 
 ---
 
-# Step 4: Start Containers
+## **Start Containers**
 
-Start the containers in detached mode.
-
+```bash
 docker compose up -d
+```
 
-Verify containers are running:
-
-docker ps
-
-Example output:
-
-backend
-postgresdb
+![Docker Compose Up](Images/19.png)
 
 ---
 
-# Step 5: Check Container Logs
+## **Verify Running Containers**
 
-To verify that the backend server started correctly:
+```bash
+docker ps
+```
 
+Example Output
+
+```
+CONTAINER ID   IMAGE                        PORTS
+backend        containerized-app-backend    0.0.0.0:3000->3000/tcp
+postgresdb     containerized-app-db
+```
+
+![Running Containers](Images/20.png)
+
+---
+
+# **Part F: Container Verification**
+
+## **Check Backend Logs**
+
+```bash
 docker logs backend
+```
 
-Expected output:
+Expected Output
 
+```
 Server running on port 3000
+```
 
 ---
 
-# Step 6: Inspect Container Network
+## **Inspect Container Network**
 
-To check container IP address and network details:
-
+```bash
 docker inspect backend
+```
 
-Look for the NetworkSettings section:
+Example Output
 
+```
 IPAddress: 192.168.200.10
+```
 
 ---
 
-# Step 7: Test the Backend API
+# **Part G: API Testing using Postman**
 
-Test using curl command:
+Install Postman:
 
-curl http://localhost:3000
+🔗 https://www.postman.com/downloads/
 
-Or open in browser:
-
-http://localhost:3000
+Postman is used to test the REST API endpoints.
 
 ---
 
-# Step 8: Access Container Shell
+## **Create User (POST Request)**
 
-To open the backend container terminal:
+Method
 
+```
+POST
+```
+
+URL
+
+```
+http://localhost:3000/users
+```
+
+Body → Raw → JSON
+
+```json
+{
+  "name": "Shruti",
+  "email": "shruti@email.com"
+}
+```
+
+Click **Send**.
+
+---
+
+## **Expected Response**
+
+Status
+
+```
+200 OK
+```
+
+Response Body
+
+```json
+{
+  "id": 1,
+  "name": "Shruti",
+  "email": "shruti@email.com"
+}
+```
+
+This confirms that the data was successfully stored in the database.
+
+---
+
+## **Get All Users (GET Request)**
+
+Request
+
+```
+GET http://localhost:3000/users
+```
+
+Response
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Shruti",
+    "email": "shruti@email.com"
+  }
+]
+```
+
+---
+
+# **Part H: Testing using Curl**
+
+You can also test the API using curl.
+
+```bash
+curl http://localhost:3000/users
+```
+
+---
+
+# **Part I: Access Container Terminal**
+
+Open backend container terminal.
+
+```bash
 docker exec -it backend sh
+```
 
-Inside the container you can test:
+Test inside container:
 
-curl http://localhost:3000
+```bash
+curl localhost:3000
+```
 
-Exit container:
+Exit container
 
+```bash
 exit
+```
 
 ---
 
-# Step 9: View Docker Networks
+# **Useful Docker Commands**
 
-docker network ls
+List running containers
 
-To inspect network configuration:
-
-docker network inspect macvlan_net
-
----
-
-# Step 10: Stop Containers
-
-To stop and remove containers:
-
-docker compose down
-
----
-
-# Useful Docker Commands
-
-List running containers:
-
+```bash
 docker ps
+```
 
-List all containers:
+View logs
 
-docker ps -a
-
-View logs:
-
+```bash
 docker logs backend
+```
 
-Restart containers:
+Restart containers
 
+```bash
 docker compose restart
+```
 
-Remove containers and network:
+Stop containers
 
+```bash
 docker compose down
+```
+
+Inspect Docker network
+
+```bash
+docker network inspect macvlan_net
+```
 
 ---
 
-# Networking Concept Used
+# **Result**
 
-This project uses Docker macvlan networking.
-
-Features:
-
-* Containers get their own MAC address
-* Containers behave like separate devices on the network
-* Each container receives its own IP address
-
-Example:
-
-Backend Container IP : 192.168.200.10
-Database Container IP : 192.168.200.11
-
----
-
-# Conclusion
-
-This project demonstrates how Docker can be used to containerize applications and manage multiple services using Docker Compose. It also shows how custom Docker networks can be used to allow communication between containers while maintaining isolation.
+The backend application and PostgreSQL database were successfully containerized using Docker. Docker Compose was used to manage multiple containers, and macvlan networking was configured for container communication. The REST APIs were successfully tested using Postman and curl.
