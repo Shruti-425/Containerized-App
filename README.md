@@ -77,19 +77,6 @@ Containerized-App/
 
 ---
 
-## **Step 1: Clone the Repository**
-
-Clone the project repository from GitHub.
-
-```bash
-git clone https://github.com/Shruti-425/Containerized-App.git
-cd Containerized-App
-```
-
-![Clone Repository]
-
----
-
 # **Part C: Network Configuration**
 
 Before creating Docker networks, check the system network configuration.
@@ -109,7 +96,7 @@ Gateway      : 192.168.200.1
 ```
 
 This ensures that the Docker network subnet is valid.
-(Images/3.png)
+Images\3.png
 
 ---
 
