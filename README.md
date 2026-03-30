@@ -15,8 +15,6 @@ Download and install Docker Desktop from the official website.
 
 🔗 https://www.docker.com/products/docker-desktop/
 
-![Docker Installation]
-
 ---
 
 ## **Step 2: Verify Docker Installation**
@@ -33,7 +31,6 @@ Example Output
 Docker version 24.x.x
 ```
 
-![Docker Version]
 
 ---
 
@@ -49,7 +46,6 @@ Example Output
 Docker Compose version v2.x.x
 ```
 
-![Docker Compose Version]
 
 ---
 
