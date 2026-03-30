@@ -148,7 +148,8 @@ Building db
 Successfully built images
 ```
 
-![Docker Build]
+![Docker Build](Images/5.png)
+![Docker Build](Images/6.png)
 
 ---
 
@@ -158,7 +159,7 @@ Successfully built images
 docker compose up -d
 ```
 
-![Docker Compose Up]
+![Docker Compose Up](Images/18.png)
 
 ---
 
@@ -176,7 +177,7 @@ backend        containerized-app-backend    0.0.0.0:3000->3000/tcp
 postgresdb     containerized-app-db
 ```
 
-![Running Containers]
+![Running Containers](Images/19.png)
 
 ---
 
@@ -187,8 +188,6 @@ postgresdb     containerized-app-db
 ```bash
 docker logs backend
 ```
-
-Expected Output
 
 ```
 Server running on port 3000
@@ -207,6 +206,7 @@ Example Output
 ```
 IPAddress: 192.168.200.10
 ```
+![Docker inspect backend](Images/20.png)
 
 ---
 
@@ -268,6 +268,8 @@ Response Body
 This confirms that the data was successfully stored in the database.
 
 ---
+![Post](Images/10.png)
+
 
 ## **Get All Users (GET Request)**
 
@@ -298,6 +300,9 @@ You can also test the API using curl.
 ```bash
 curl http://localhost:3000/users
 ```
+
+![GET](Images/11.png)
+![GET](Images/12.png)
 
 ---
 
