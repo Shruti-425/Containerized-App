@@ -109,6 +109,7 @@ Gateway      : 192.168.200.1
 ```
 
 This ensures that the Docker network subnet is valid.
+(Images/3.png)
 
 ---
 
