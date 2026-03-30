@@ -124,8 +124,6 @@ host
 none
 ```
 
-![Docker Network]
-
 ---
 
 # **Part E: Build and Run Containers**
