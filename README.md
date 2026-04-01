@@ -10,7 +10,7 @@ This project demonstrates building and deploying a containerized Node.js backend
 
 ---
 
-# 🛠 **Part A: Environment Setup**
+#  **Part A: Environment Setup**
 
 ## **Step 1: Install Docker**
 
@@ -31,7 +31,7 @@ Example Output:
 ```
 Docker version 24.x.x
 ```
-[!aa](Images/q1.png)
+![aa](Images/q1.png)
 ---
 
 ## **Step 3: Verify Docker Compose**
@@ -79,7 +79,7 @@ IPv4 Address : 192.168.200.5
 Subnet Mask  : 255.255.255.0
 Gateway      : 192.168.200.1
 ```
-[!aa](Images/3.png)
+![aa](Images/3.png)
 
 ---
 
@@ -98,15 +98,15 @@ docker compose build
 docker compose up -d
 ```
 
-[!aa](Images/n1.png)
-[!aa](Images/n2.png)
+![aa](Images/n1.png)
+![aa](Images/n2.png)
 
 ### Verify containers
 
 ```bash
 docker ps
 ```
-[!aa](Images/q2.png)
+![aa](Images/q2.png)
 
 
 ### Test APIs
@@ -123,8 +123,8 @@ curl -X POST http://localhost:3000/users \
 # Get users
 curl http://localhost:3000/users
 ```
-[!aa](Images/n3.png)
-[!aa](Images/q1.png)
+![aa](Images/n3.png)
+![aa](Images/q1.png)
 
 
 ### Notes
@@ -151,21 +151,21 @@ docker network create -d macvlan \
 macvlan_test
 ```
 
-[!aa](Images/n3.png)
+![aa](Images/n3.png)
 
 ### Run container
 
 ```bash
 docker run -d --name mac_test --network macvlan_test nginx
 ```
-[!aa](Images/n4.png)
+![aa](Images/n4.png)
 
 ### Get container IP
 
 ```bash
 docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" mac_test
 ```
-[!aa](Images/n5.png)
+![aa](Images/n5.png)
 
 ### Test connectivity
 
@@ -173,8 +173,8 @@ docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" mac
 ping <container_ip>
 curl http://<container_ip>
 ```
-[!aa](Images/n6.png)
-[!aa](Images/n7.png)
+![aa](Images/n6.png)
+![aa](Images/n7.png)
 
 
 ### Limitations
@@ -200,15 +200,15 @@ sudo docker network create -d ipvlan \
 -o parent=eth0 ipvlan_test
 ```
 
-[!aa](Images/m1.png)
-[!aa](Images/m4.png)
+![aa](Images/m1.png)
+![aa](Images/m4.png)
 
 ### Run container
 
 ```bash
 sudo docker run -d --name ipvlan_test_nginx --network ipvlan_test nginx
 ```
-[!aa](Images/m8.png)
+![aa](Images/m8.png)
 
 ### Get container IP
 
