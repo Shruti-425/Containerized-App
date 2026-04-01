@@ -12,38 +12,76 @@ const pool = new Pool({
   port: 5432
 });
 
-async function initDB(){
- await pool.query(`
-  CREATE TABLE IF NOT EXISTS users(
-   id SERIAL PRIMARY KEY,
-   name TEXT,
-   email TEXT
-  )
- `);
+//  Retry DB connection
+async function connectWithRetry() {
+  let retries = 5;
+
+  while (retries) {
+    try {
+      await pool.query("SELECT 1");
+      console.log(" Connected to DB");
+      return;
+    } catch (err) {
+      console.log(" DB not ready, retrying...");
+      retries--;
+      await new Promise(res => setTimeout(res, 3000));
+    }
+  }
+  throw new Error(" Could not connect to DB");
 }
 
-initDB();
+//  Initialize DB safely
+async function initDB() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users(
+        id SERIAL PRIMARY KEY,
+        name TEXT,
+        email TEXT
+      )
+    `);
+    console.log(" Table ready");
+  } catch (err) {
+    console.error("DB Init Error:", err);
+  }
+}
 
-app.post("/users", async (req,res)=>{
- const {name,email} = req.body;
+// Run startup sequence
+(async () => {
+  await connectWithRetry();
+  await initDB();
+})();
 
- const result = await pool.query(
-  "INSERT INTO users(name,email) VALUES($1,$2) RETURNING *",
-  [name,email]
- );
+// API Routes
+app.post("/users", async (req, res) => {
+  try {
+    const { name, email } = req.body;
 
- res.json(result.rows[0]);
+    const result = await pool.query(
+      "INSERT INTO users(name,email) VALUES($1,$2) RETURNING *",
+      [name, email]
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.get("/users", async (req,res)=>{
- const result = await pool.query("SELECT * FROM users");
- res.json(result.rows);
+app.get("/users", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM users");
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.get("/health",(req,res)=>{
- res.json({status:"ok"});
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
-app.listen(3000,()=>{
- console.log("Server running on port 3000");
+// Start server
+app.listen(3000, () => {
+  console.log(" Server running on port 3000");
 });

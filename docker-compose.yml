@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
 
   backend:
@@ -14,13 +12,12 @@ services:
       POSTGRES_DB: mydb
     depends_on:
       - db
-    restart: always
     networks:
-      macvlan_net:
+      my_ipvlan:
         ipv4_address: 192.168.200.10
 
   db:
-    build: ./database
+    build: ./db
     container_name: postgresdb
     environment:
       POSTGRES_DB: mydb
@@ -28,14 +25,19 @@ services:
       POSTGRES_PASSWORD: admin123
     volumes:
       - pgdata:/var/lib/postgresql/data
-    restart: always
     networks:
-      macvlan_net:
+      my_ipvlan:
         ipv4_address: 192.168.200.11
 
 volumes:
   pgdata:
 
 networks:
-  macvlan_net:
-    external: true
+  my_ipvlan:
+    driver: ipvlan
+    driver_opts:
+      parent: eth0   # Linux interface
+    ipam:
+      config:
+        - subnet: 192.168.200.0/24
+          gateway: 192.168.200.1

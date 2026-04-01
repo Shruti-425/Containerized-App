@@ -1,12 +1,13 @@
-# **Containerized Application using Docker**
+
+#### **Containerized Node.js + PostgreSQL Application using Docker**
 
 ## **Objective**
 
-To build and deploy a containerized application using Docker and Docker Compose.
-The backend service communicates with a PostgreSQL database and the APIs are tested using Postman.
+This project demonstrates building and deploying a containerized Node.js backend with a PostgreSQL database using Docker and Docker Compose. It includes testing APIs with **Postman** and **curl**, and demonstrates three types of Docker networking: **bridge**, **macvlan**, and **ipvlan**.
 
 ---
 
+<<<<<<< HEAD
 # **Part A: Environment Setup**
 
 ## **Step 1: Install Docker**
@@ -55,68 +56,147 @@ Docker Compose version v2.x.x
 
 ```
 Containerized-App/
+=======
+## **Project Structure**
+
+```
+containerized-app/
+>>>>>>> f09f930 (Updated README.md)
 │
-├── backend/
+├── backend/             # Node.js backend app
 │   ├── server.js
 │   ├── Dockerfile
 │   └── package.json
 │
-├── db/
+├── db/                  # PostgreSQL Dockerfile and init scripts
 │   ├── Dockerfile
 │   └── init.sql
 │
-├── Images/
+├── Images/              # Screenshots for documentation
 │
-├── docker-compose.yml
+├── docker-compose.yml   # Compose file for bridge network
 └── README.md
 ```
 
 ---
 
-# **Part C: Network Configuration**
+# **Part A: Environment Setup**
 
-Before creating Docker networks, check the system network configuration.
+### Step 1: Install Docker
 
-## **Check System IP Address**
+Download and install Docker Desktop:
+
+🔗 [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+### Step 2: Verify Docker Installation
 
 ```bash
-ipconfig
+docker --version
 ```
 
-Example Output
+
+ output:
+![Version](Images/q1.png)
+
+### Step 3: Verify Docker Compose
+
+```bash
+docker compose version
+```
+
+---
+
+# **Part B: System Network Configuration**
+
+Before creating custom networks, check your system network configuration.
+
+```bash
+ipconfig    # Windows
+    
+```
+
+Example output:
 
 ```
 IPv4 Address : 192.168.200.5
 Subnet Mask  : 255.255.255.0
 Gateway      : 192.168.200.1
 ```
-
-This ensures that the Docker network subnet is valid.
-![Network Config](Images/3.png)
+![Version](Images\3.png)
 ---
 
-# **Part D: Docker Networking Setup**
+# **Part C: Docker Networking Setup**
 
-## **Create macvlan Network**
+## **1. Bridge Network (Default)** 
+
+Docker's default **bridge network** allows containers to communicate with each other and with the host.
+
+### Steps
+
+1. Build and start containers:
+
+```bash
+docker compose build
+docker compose up -d
+```
+![Version](Images\n1.png)
+![Version](Images\n2.png)
+
+2. Verify running containers:
+
+```bash
+docker ps
+```
+![alt text](Images\q2.png)
+
+3. Test API endpoints:
+
+```bash
+# Health check
+curl http://localhost:3000/health
+
+# Create user
+curl -X POST http://localhost:3000/users -H "Content-Type: application/json" -d "{\"name\":\"Shruti\",\"email\":\"shruti@email.com\"}"
+
+# Get all users
+curl http://localhost:3000/users
+```
+
+**Notes:**
+
+* Works on **Windows, Linux, and WSL**.
+* Host ↔ container and container ↔ container communication works out of the box.
+
+---
+![alt text](Images\n3.png)
+
+
+
+## **2. Macvlan Network** 
+
+**Macvlan** allows containers to appear as separate devices on the LAN with their own IPs.
+
+### Steps
+
+1. Create macvlan network:
 
 ```bash
 docker network create -d macvlan \
 --subnet=192.168.200.0/24 \
 --gateway=192.168.200.1 \
 -o parent=eth0 \
-macvlan_net
+macvlan_test
 ```
 
----
-
-## **Verify Network**
+2. Run a container on macvlan:
 
 ```bash
-docker network ls
+docker run -d --name mac_test --network macvlan_test nginx
 ```
+![alt text](Images\n4.png)
 
-Expected Output
 
+<<<<<<< HEAD
 ```
 macvlan_net
 bridge
@@ -129,180 +209,92 @@ none
 # **Part E: Build and Run Containers**
 
 ## **Build Docker Images**
+=======
+3. Get container IP:
+>>>>>>> f09f930 (Updated README.md)
 
 ```bash
-docker compose build
+docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" mac_test
 ```
+![alt text](Images\n5.png)
 
-Example Output
-
-```
-Building backend
-Building db
-Successfully built images
-```
-
-![Docker Build](Images/5.png)
-![Docker Build](Images/6.png)
-
----
-
-## **Start Containers**
+4. Test connectivity:
 
 ```bash
-docker compose up -d
+ping <container_ip>
+curl http://<container_ip>
 ```
+![alt text](Images\n6.png)
+![alt text](Images\n7.png)
 
-![Docker Compose Up](Images/18.png)
+
+
+**Limitations:**
+
+* Containers **cannot communicate directly with the host**.
+* Works only if host network supports macvlan.
+* Used for isolated network scenarios.
 
 ---
 
-## **Verify Running Containers**
+## **3. IPvlan Network**  (Linux / WSL Only)
+
+**IPvlan** is similar to macvlan but solves some macvlan limitations like multiple IP subinterfaces.
+
+### Steps
+
+1. Create IPvlan network:
 
 ```bash
-docker ps
+sudo docker network create -d ipvlan \
+--subnet=172.22.88.0/24 \
+--gateway=172.22.88.1 \
+-o parent=eth0 ipvlan_test
 ```
+![alt text](Images\m3.png)
+![alt text](Images\m2.png)
+![alt text](Images\m4.png)
 
-Example Output
-
-```
-CONTAINER ID   IMAGE                        PORTS
-backend        containerized-app-backend    0.0.0.0:3000->3000/tcp
-postgresdb     containerized-app-db
-```
-
-![Running Containers](Images/19.png)
-
----
-
-# **Part F: Container Verification**
-
-## **Check Backend Logs**
+2. Run container on ipvlan:
 
 ```bash
-docker logs backend
+sudo docker run -d --name ipvlan_test_nginx --network ipvlan_test nginx
 ```
+![alt text](Images\m8.png)
 
-```
-Server running on port 3000
-```
 
----
-
-## **Inspect Container Network**
+3. Get container IP:
 
 ```bash
-docker inspect backend
+docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ipvlan_test_nginx
 ```
 
-Example Output
 
-```
-IPAddress: 192.168.200.10
-```
-![Docker inspect backend](Images/20.png)
+**Notes:**
+
+* Works only on **Linux or WSL**.
+* Host ↔ container communication may require extra routing.
+* Useful for high-density container networking.
 
 ---
 
-# **Part G: API Testing using Postman**
-
-Install Postman:
-
-🔗 https://www.postman.com/downloads/
-
-Postman is used to test the REST API endpoints.
-
 ---
 
-## **Create User (POST Request)**
-
-Method
-
-```
-POST
-```
-
-URL
-
-```
-http://localhost:3000/users
-```
-
-Body → Raw → JSON
-
-```json
-{
-  "name": "Shruti",
-  "email": "shruti@email.com"
-}
-```
-
-Click **Send**.
-
----
-
-## **Expected Response**
-
-Status
-
-```
-200 OK
-```
-
-Response Body
-
-```json
-{
-  "id": 1,
-  "name": "Shruti",
-  "email": "shruti@email.com"
-}
-```
-
-This confirms that the data was successfully stored in the database.
-
----
-![Post](Images/10.png)
-
-
-## **Get All Users (GET Request)**
-
-Request
-
-```
-GET http://localhost:3000/users
-```
-
-Response
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Shruti",
-    "email": "shruti@email.com"
-  }
-]
-```
-
----
-
-# **Part H: Testing using Curl**
-
-You can also test the API using curl.
+# **Part D: Testing using Curl**
 
 ```bash
+# Get users
 curl http://localhost:3000/users
-```
 
-![GET](Images/11.png)
-![GET](Images/12.png)
+# Create user
+curl -X POST http://localhost:3000/users -H "Content-Type: application/json" -d "{\"name\":\"Shruti\",\"email\":\"shruti@email.com\"}"
+```
 
 ---
 
-# **Part I: Access Container Terminal**
+# **Part F: Access Container Terminal**
 
-Open backend container terminal.
+Open backend container terminal:
 
 ```bash
 docker exec -it backend sh
@@ -314,7 +306,7 @@ Test inside container:
 curl localhost:3000
 ```
 
-Exit container
+Exit container:
 
 ```bash
 exit
@@ -322,40 +314,34 @@ exit
 
 ---
 
-# **Useful Docker Commands**
+# **Part G: Cleanup**
 
-List running containers
-
-```bash
-docker ps
-```
-
-View logs
+Remove containers and networks:
 
 ```bash
-docker logs backend
-```
-
-Restart containers
-
-```bash
-docker compose restart
-```
-
-Stop containers
-
-```bash
-docker compose down
-```
-
-Inspect Docker network
-
-```bash
-docker network inspect macvlan_net
+docker compose down --volumes
+docker rm -f mac_test ipvlan_test_nginx
+docker network rm macvlan_test ipvlan_test
 ```
 
 ---
 
-# **Result**
+# **Part H: Key Points**
 
-The backend application and PostgreSQL database were successfully containerized using Docker. Docker Compose was used to manage multiple containers, and macvlan networking was configured for container communication. The REST APIs were successfully tested using Postman and curl.
+| Network Type | Host ↔ Container | Container ↔ Container | Notes                             |
+| ------------ | ---------------- | --------------------- | --------------------------------- |
+| Bridge       | Works            |   Works               | Default, reliable                 |
+| Macvlan      | No direct        |   Works               | Separate LAN IPs                  |
+| IPvlan       | Limited          |   Works               | Linux only, solves macvlan issues |
+
+---
+
+# **Part I: Useful Docker Commands**
+
+```bash
+docker ps                 # List running containers
+docker logs <container>   # View container logs
+docker compose restart    # Restart containers
+docker compose down       # Stop containers
+docker network inspect <network>  # Inspect network
+```
